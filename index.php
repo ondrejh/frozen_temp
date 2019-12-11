@@ -34,9 +34,15 @@
                 while($row = $data->fetchArray()) {
                     $entries[] = array(date("Y-m-d H:i", strtotime($row['stamp'])), $row['t1'], $row['t2']);
                 }
-                echo "vypis<br>". PHP_EOL;
-                for ($i=1; $i<sizeof($entries); $i++) echo var_dump($entries[$i]);
-                echo "konec vypisu<br>". PHP_EOL;
+
+                # polozky z databaze
+                echo "<h2>Vypis</h2>". PHP_EOL;
+                for ($i=1; $i<sizeof($entries); $i++) {
+                    echo var_dump($entries[$i]);
+                    echo '<br>'.PHP_EOL;
+                }
+            
+                # vykresleni grafu:
                 echo "<script>". PHP_EOL;
                 echo "var t1 = {x: [";
                 $first = True;
