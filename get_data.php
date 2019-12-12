@@ -38,7 +38,7 @@ function get_sql($limit = 'ALL') {
   if ($limit != 'ALL')
     $query = $query. " WHERE ". $db_stamp. " >= NOW() - INTERVAL ". $limit;
   $query = $query. " ORDER BY ". $db_stamp;
-  echo $query. PHP_EOL;
+  //echo $query. PHP_EOL;
   $result = $db_conn->query($query);
   $ret = $result->fetch_all();
   $db_conn->close();
@@ -54,12 +54,12 @@ if (php_sapi_name() == 'cli') {
     if ($argv[1] == '-d') {
       if ($argc > 2) {
         $d = get_sql($argv[2]);
-        var_dump($d);
       }
       else {
         $d = get_sql();
-        var_dump($d);
       }
+      for ($i = 0; $i < count($d); $i ++)
+        echo $d[$i][0]. " ". $d[$i][1]. " ". $d[$i][2]. PHP_EOL;
       exit();
     }
   }
