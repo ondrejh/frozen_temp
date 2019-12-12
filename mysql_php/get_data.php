@@ -12,6 +12,26 @@ $db_t2 = 't2';
 $db_stamp = 'stamp';
 
 
+// return part of string between 'before' (array) and 'after' strings
+function find($where, $before, $after) {
+  $b = 0;
+  for ($i = 0; $i < count($before); $i++)
+    $b += strpos(substr($where, $b), $before[$i]) + strlen($before[$i]);
+  $e = strpos(substr($where, $b), $after);
+  return substr($where, $b, $e);
+}
+
+
+// get data from sensors (by parsing web page)
+function get_sensors() {
+  $fc = file_get_contents("http://89.190.88.10:89/status.html");
+
+  $t1 = find($fc, ['Temperature INPUT 1', 'class="temperature"', '>'], '<');
+  $t2 = find($fc, ['Temperature INPUT 2', 'class="temperature"', '>'], '<');
+
+  return [$t1, $t2];
+}
+
 // insert data into database
 function insert_sql($t1, $t2) {
   global $db_host, $db_username, $db_password, $db_name, $db_table, $db_t1, $db_t2, $db_stamp;
@@ -50,6 +70,10 @@ function get_sql($limit = 'ALL') {
 // do this if run from command line (not html)
 if (php_sapi_name() == 'cli') {
 
+  ini_set('display_errors', 1);
+  ini_set('display_startup_errors', 1);
+  error_reporting(E_ALL);
+    
   if ($argc > 1) {
     if ($argv[1] == '-d') {
       if ($argc > 2) {
@@ -64,8 +88,7 @@ if (php_sapi_name() == 'cli') {
     }
   }
 
-  insert_sql(12.3, -8.5);
-
+  [$t1, $t2] = get_sensors();
+  insert_sql($t1, $t2);
 }
-
 ?>
