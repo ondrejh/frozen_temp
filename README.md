@@ -1,3 +1,6 @@
+Votuzilec sensor chart
+======================
+
 ## Raspberry Pi installation:
 ```
   sudo apt update
@@ -16,3 +19,8 @@
     <insert to the end:>
     */15 * * * * python3 /home/pi/get_data.py
 ```
+
+## ToDo:
+- webi
+- dokumentace
+- jeste neco co jsem zapomnel ...
