@@ -1,8 +1,8 @@
 Votuzilec sensor chart
 ======================
 
-## Raspberry Pi installation:
-Install software
+## Raspberry Pi installation (python, sqlite - lite version)
+Install software (apache, php, git)
 ```
   sudo apt update
   sudo apt upgrade
@@ -11,16 +11,43 @@ Install software
   sudo chown -R pi:www-data /var/www/html/
   sudo chmod -R 770 /var/www/html/
   sudo apt install php
-  sudo apt install mariadb-server php-mysql
+
+  sudo apt install git
 ```
+Get project files from git repository
+```
+  git clone https://github.com/ondrejh/frozen_temp.git
+  cd frozen_temp
+  ./get_plotly.sh
+```
+Copy page files
+```
+  cp ploly.min.js /var/www/html/
+  cd sqlite_python
+  cp index.php /var/www/html/
+```
+Start cron to get data every 15 minutes
+```
+  crontab -e
+    .. navigate to the end of file and type
+    */15 * * * * python3 /home/pi/
+    .. save
+```
+Restart apache
+```
+  sudo service apache2 restart
+```
+
+## MySQL and PHP version instalation
 Secure MySQL installation
 ```
   sudo mysql_secure_installation
+  sudo apt install mariadb-server php-mysql
 ```
 Create MySQL user and privileges
 ```
   sudo mysql --user=root --password
-  > create user admin@localhost identified my 'your_password';
+  > create user admin@localhost identified my '1243';
   > grant all privileges on *.* to admin@localhost;
   > FLUSH PRIVILEGES;
   > exit;
@@ -31,27 +58,28 @@ Create database
   > CREATE DATABASE votuzilec;
   > exit;
 ```
+Copy files
+```
+  cp plotly.min.js /var/www/html/
+  cd mysql_php
+  cp index.php get_data.php /var/www/html
+```
+Start cron to get data every 15 minutes
+```
+  crontab -e
+    .. navigate to the end of file and type
+    */15 * * * * php /var/www/html/get_data.php
+    .. save
+```
 Restart apache
 ```
   sudo service apache2 restart
 ```
 
-  
-  sudo apt install git
-  git clone git@github.com:ondrejh/frozen_temp.git
-  cd frozen_temp
-  ./get_plotly.sh
-  cp index.php /var/www/html/
-  crontab -e
-    <insert to the end:>
-    */15 * * * * python3 /home/pi/get_data.py
-```
-
 ## ToDo:
-- přepsat do PHP a MySQL aby to šlo na webhosting
-- dokumentace
-- jeste neco co jsem zapomnel ...
-- jo a screeshot by se hodil
+- přepsat do PHP a MySQL aby to šlo na webhostingu
+- vylepšit graf
+- screeshot by se hodil
 
 ## Sources:
 LAMP installation: https://randomnerdtutorials.com/raspberry-pi-apache-mysql-php-lamp-server/
