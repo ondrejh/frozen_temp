@@ -1,6 +1,5 @@
 ## Raspberry Pi installation:
 
-'''
   sudo apt update
   sudo apt upgrade
 
@@ -9,10 +8,10 @@
   sudo chmod -R 770 /var/www/html/
   
   sudo apt install git
-  git clone ...
-'''
-
-1) wget
-2) parse
-3) upload to db
-4) chart
+  git clone git@github.com:ondrejh/frozen_temp.git
+  cd frozen_temp
+  ./get_plotly.sh
+  cp index.php /var/www/html/
+  crontab -e
+    <insert to the end:>
+    */15 * * * * python3 /home/pi/get_data.py
