@@ -1,5 +1,5 @@
 ## Raspberry Pi installation:
-
+```
   sudo apt update
   sudo apt upgrade
 
@@ -15,3 +15,4 @@
   crontab -e
     <insert to the end:>
     */15 * * * * python3 /home/pi/get_data.py
+```
