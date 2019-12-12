@@ -27,51 +27,45 @@
             <h2>Graf</h2>
             <div id='chart'></div>
             <?php
-                $db = new SQLite3("data.sql");
-                $query = "SELECT * FROM 'readings' WHERE 'stamp' > datetime('now', '-3 days')";
-                $data = $db->query($query);
-                $entries = array();
-                while($row = $data->fetchArray()) {
-                    $entries[] = array(date("Y-m-d H:i", strtotime($row['stamp'])), $row['t1'], $row['t2']);
-                }
-
-                # polozky z databaze
-                echo "<h2>Vypis</h2>". PHP_EOL;
-                for ($i=1; $i<sizeof($entries); $i++) {
-                    echo var_dump($entries[$i]);
-                    echo '<br>'.PHP_EOL;
-                }
+                include "get_data.php";
+            
+                $data = get_sql('7 DAY');
+            
+                echo "<p>". PHP_EOL;
+                for ($i = 0; $i < sizeof($data); $i++)
+                    echo $data[$i][0]. " ". $data[$i][1]. " ". $data[$i][2]. "<br>". PHP_EOL;
+                echo "</p>". PHP_EOL;
             
                 # vykresleni grafu:
                 echo "<script>". PHP_EOL;
                 echo "var t1 = {x: [";
                 $first = True;
-                for($i=1; $i<sizeof($entries); $i++) {
+                for($i=1; $i<sizeof($data); $i++) {
                     if (! $first) echo ", ";
                     else $first = False;
-                    echo "'". $entries[$i][0]. "'";
+                    echo "'". $data[$i][0]. "'";
                 }
                 echo "], y: [";
                 $first = True;
-                for($i=1; $i<sizeof($entries); $i++) {
+                for($i=1; $i<sizeof($data); $i++) {
                     if (! $first) echo ", ";
                     else $first = False;
-                    echo $entries[$i][1];
+                    echo $data[$i][1];
                 }
                 echo "], type: 'scatter'};".PHP_EOL;
                 echo "var t2 = {x: [";
                 $first = True;
-                for($i=1; $i<sizeof($entries); $i++) {
+                for($i=1; $i<sizeof($data); $i++) {
                     if (! $first) echo ", ";
                     else $first = False;
-                    echo "'". $entries[$i][0]. "'";
+                    echo "'". $data[$i][0]. "'";
                 }
                 echo "], y: [";
                 $first = True;
-                for($i=1; $i<sizeof($entries); $i++) {
+                for($i=1; $i<sizeof($data); $i++) {
                     if (! $first) echo ", ";
                     else $first = False;
-                    echo $entries[$i][2];
+                    echo $data[$i][2];
                 }
                 echo "], type: 'scatter'};". PHP_EOL;
                 echo "var data = [t1, t2];". PHP_EOL;
