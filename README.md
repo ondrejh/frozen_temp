@@ -77,7 +77,7 @@ Restart apache
 ```
 
 ## ToDo:
-- přepsat do PHP a MySQL aby to šlo na webhostingu
+- vyrobit unifikovanou funkci na graf pro obě verze
 - vylepšit graf
 - screeshot by se hodil
 
