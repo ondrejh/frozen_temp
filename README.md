@@ -21,7 +21,7 @@ Votuzilec sensor chart
 ```
 
 ## ToDo:
-- webi
+- přepsat do PHP a MySQL aby to šlo na webhosting
 - dokumentace
 - jeste neco co jsem zapomnel ...
 - jo a screeshot by se hodil
