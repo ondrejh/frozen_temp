@@ -29,16 +29,16 @@
             <?php
                 $db = new SQLite3("data.sql");
                 $query = "SELECT * FROM 'readings' WHERE 'stamp' > datetime('now', '-3 days')";
-                $data = $db->query($query);
-                $entries = array();
-                while($row = $data->fetchArray()) {
-                    $entries[] = array(date("Y-m-d H:i", strtotime($row['stamp'])), $row['t1'], $row['t2']);
+                $db_data = $db->query($query);
+                $data = array();
+                while($row = $db_data->fetchArray()) {
+                    $data[] = array(date("Y-m-d H:i", strtotime($row['stamp'])), $row['t1'], $row['t2']);
                 }
 
                 # polozky z databaze
                 echo "<h2>Vypis</h2>". PHP_EOL;
-                for ($i=1; $i<sizeof($entries); $i++) {
-                    echo var_dump($entries[$i]);
+                for ($i=1; $i<sizeof($data); $i++) {
+                    echo var_dump($data[$i]);
                     echo '<br>'.PHP_EOL;
                 }
             
@@ -46,36 +46,37 @@
                 echo "<script>". PHP_EOL;
                 echo "var t1 = {x: [";
                 $first = True;
-                for($i=1; $i<sizeof($entries); $i++) {
+                for($i=1; $i<sizeof($data); $i++) {
                     if (! $first) echo ", ";
                     else $first = False;
-                    echo "'". $entries[$i][0]. "'";
+                    echo "'". $data[$i][0]. "'";
                 }
                 echo "], y: [";
                 $first = True;
-                for($i=1; $i<sizeof($entries); $i++) {
+                for($i=1; $i<sizeof($data); $i++) {
                     if (! $first) echo ", ";
                     else $first = False;
-                    echo $entries[$i][1];
+                    echo $data[$i][1];
                 }
-                echo "], type: 'scatter'};".PHP_EOL;
+                echo "], name: 'voda', type: 'scatter', mode: 'lines', fill: 'tozeroy'};".PHP_EOL;
                 echo "var t2 = {x: [";
                 $first = True;
-                for($i=1; $i<sizeof($entries); $i++) {
+                for($i=1; $i<sizeof($data); $i++) {
                     if (! $first) echo ", ";
                     else $first = False;
-                    echo "'". $entries[$i][0]. "'";
+                    echo "'". $data[$i][0]. "'";
                 }
                 echo "], y: [";
                 $first = True;
-                for($i=1; $i<sizeof($entries); $i++) {
+                for($i=1; $i<sizeof($data); $i++) {
                     if (! $first) echo ", ";
                     else $first = False;
-                    echo $entries[$i][2];
+                    echo $data[$i][2];
                 }
-                echo "], type: 'scatter'};". PHP_EOL;
+                echo "], name: 'vzduch', type: 'scatter', mode: 'lines', fill: 'tozeroy'};". PHP_EOL;
                 echo "var data = [t1, t2];". PHP_EOL;
-                echo "Plotly.newPlot('chart', data); </script>". PHP_EOL;
+                echo "var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [°C]'}, margin: { t: 0}};". PHP_EOL;
+                echo "Plotly.newPlot('chart', data, layout); </script>". PHP_EOL;
             ?>
         </article>
     </section>
