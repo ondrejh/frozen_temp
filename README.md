@@ -24,3 +24,4 @@ Votuzilec sensor chart
 - webi
 - dokumentace
 - jeste neco co jsem zapomnel ...
+- jo a screeshot by se hodil
