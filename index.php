@@ -45,7 +45,7 @@
                 echo "</table>". PHP_EOL;
             
                 # vykresleni grafu:
-                echo "<script>". PHP_EOL;
+                echo "<script>". PHP_EOL. "var voda_col = '#0033cc';". PHP_EOL. "var vzduch_col = '#3399ff';". PHP_EOL;
                 echo "var t1 = {x: [";
                 $first = True;
                 for($i=1; $i<sizeof($data); $i++) {
@@ -60,7 +60,7 @@
                     else $first = False;
                     echo $data[$i][1];
                 }
-                echo "], name: 'voda', type: 'scatter', mode: 'lines', fill: 'tozeroy'};".PHP_EOL;
+                echo "], name: 'voda', type: 'scatter', mode: 'lines', fill: 'tozeroy', line: {color: voda_col}};".PHP_EOL;
                 echo "var t2 = {x: [";
                 $first = True;
                 for($i=1; $i<sizeof($data); $i++) {
@@ -75,7 +75,7 @@
                     else $first = False;
                     echo $data[$i][2];
                 }
-                echo "], name: 'vzduch', type: 'scatter', mode: 'lines', fill: 'tozeroy'};". PHP_EOL;
+                echo "], name: 'vzduch', type: 'scatter', mode: 'lines', fill: 'tozeroy', line: {color: vzduch_col}};". PHP_EOL;
                 echo "var data = [t1, t2];". PHP_EOL;
                 echo "var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [°C]'}, margin: { t: 0}};". PHP_EOL;
                 echo "Plotly.newPlot('chart', data, layout); </script>". PHP_EOL;
