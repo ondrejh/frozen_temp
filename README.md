@@ -23,7 +23,6 @@ Get project files from git repository
 Copy page files
 ```
   cp ploly.min.js /var/www/html/
-  cd sqlite_python
   cp index.php /var/www/html/
 ```
 Start cron to get data every 15 minutes
@@ -61,7 +60,6 @@ Create database
 Copy files
 ```
   cp plotly.min.js /var/www/html/
-  cd mysql_php
   cp index.php get_data.php /var/www/html
 ```
 Start cron to get data every 15 minutes
@@ -77,7 +75,6 @@ Restart apache
 ```
 
 ## ToDo:
-- vyrobit unifikovanou funkci na graf pro obě verze
 - vylepšit graf
 - screeshot by se hodil
 
