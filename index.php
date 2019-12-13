@@ -26,7 +26,13 @@
                 include "get_data.php";
             
                 $data = array();
+                
                 $mysql_version = true;
+                if (isset($_GET["type"])) {
+                    if ($_GET["type"] === 'mysql') $mysql_version = true;
+                    if ($_GET["type"] === 'sqlite') $mysql_version = false;
+                }
+                
                 if ($mysql_version === true)
                     $data = get_sql('7 DAY');
                 else
