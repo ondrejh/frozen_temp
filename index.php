@@ -17,38 +17,26 @@
 
 <body class="home">
 
-    <header id="top">
-        <h1>Brodak</h1>
-    </header>
-
     <section class="content">
 
         <article class="main">
-            <h2>Graf</h2>
+            <h2>Graf (<span id='db_type'></span>)</h2>
             <div id='chart'></div>
             <?php
                 include "get_data.php";
             
                 $data = array();
-                $mysql_version = false;
+                $mysql_version = true;
                 if ($mysql_version === true)
                     $data = get_sql('7 DAY');
                 else
                     $data = get_sqlite('7 DAY');
-                #$db = new SQLite3("data.sql");
-                #$query = "SELECT * FROM 'readings' WHERE 'stamp' > datetime('now', '-3 days')";
-                #$db_data = $db->query($query);
-                #$data = array();
-                #while($row = $db_data->fetchArray()) {
-                #    $data[] = array(date("Y-m-d H:i", strtotime($row['stamp'])), $row['t1'], $row['t2']);
-                #}
 
                 # polozky z databaze
-                echo "<h2>Vypis</h2>". PHP_EOL;
-                for ($i=1; $i<sizeof($data); $i++) {
-                    echo var_dump($data[$i]);
-                    echo '<br>'.PHP_EOL;
-                }
+                echo "<h2>Vypis</h2>". PHP_EOL. "<table>". PHP_EOL;
+                for ($i=1; $i<sizeof($data); $i++)
+                    echo "<tr><td>". $data[$i][0]. '</td><td>'. $data[$i][1]. '</td><td>'. $data[$i][2]. '</td></tr>'.PHP_EOL;
+                echo "</table>". PHP_EOL;
             
                 # vykresleni grafu:
                 echo "<script>". PHP_EOL;
@@ -86,6 +74,7 @@
                 echo "var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [°C]'}, margin: { t: 0}};". PHP_EOL;
                 echo "Plotly.newPlot('chart', data, layout); </script>". PHP_EOL;
             ?>
+            <script>document.getElementById("db_type").innerText = "<?php if ($mysql_version === true) {echo "MySQL";} else {echo "SqLite";}?>"</script>
         </article>
     </section>
 </body>

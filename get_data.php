@@ -66,11 +66,13 @@ function get_sql($limit = 'ALL') {
     $query = $query. " WHERE ". $db_stamp. " >= NOW() - INTERVAL ". $limit;
   $query = $query. " ORDER BY ". $db_stamp;
   //echo $query. PHP_EOL;
-  $result = $db_conn->query($query);
-  $ret = $result->fetch_all();
+  $db_data = $db_conn->query($query);
+  $data = array(); 
+  while($row = $db_data->fetch_array()) {
+    $data[] = array(date("Y-m-d H:i", strtotime($row[$db_stamp])), $row[$db_t1], $row[$db_t2]);
+  }
   $db_conn->close();
-
-  return $ret;
+  return $data;
 }
 
 
@@ -83,12 +85,12 @@ function get_sqlite($limit = 'ALL') {
   if ($limit != 'ALL')
     $query = $query. " WHERE '". $db_stamp. "' > datetime('now', '". $limit. "')";
   $db_data = $db->query($query);
-  $data = $db_data->fetch_all();
+  $data = array();
   
+  while($row = $db_data->fetchArray()) {
+    $data[] = array(date("Y-m-d H:i", strtotime($row[$db_stamp])), $row[$db_t1], $row[$db_t2]);
+  }
   return $data;
-  #while($row = $db_data->fetchArray()) {
-    #$data[] = array(date("Y-m-d H:i", strtotime($row[$db_stamp])), $row[$db_t1], $row[$db_t2]);
-  #}
 }
 
 
