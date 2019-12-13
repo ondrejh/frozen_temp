@@ -29,12 +29,26 @@
             <?php
                 include "get_data.php";
             
-                $data = get_sql('7 DAY');
-            
-                echo "<p>". PHP_EOL;
-                for ($i = 0; $i < sizeof($data); $i++)
-                    echo $data[$i][0]. " ". $data[$i][1]. " ". $data[$i][2]. "<br>". PHP_EOL;
-                echo "</p>". PHP_EOL;
+                $data = array();
+                $mysql_version = false;
+                if ($mysql_version === true)
+                    $data = get_sql('7 DAY');
+                else
+                    $data = get_sqlite('7 DAY');
+                #$db = new SQLite3("data.sql");
+                #$query = "SELECT * FROM 'readings' WHERE 'stamp' > datetime('now', '-3 days')";
+                #$db_data = $db->query($query);
+                #$data = array();
+                #while($row = $db_data->fetchArray()) {
+                #    $data[] = array(date("Y-m-d H:i", strtotime($row['stamp'])), $row['t1'], $row['t2']);
+                #}
+
+                # polozky z databaze
+                echo "<h2>Vypis</h2>". PHP_EOL;
+                for ($i=1; $i<sizeof($data); $i++) {
+                    echo var_dump($data[$i]);
+                    echo '<br>'.PHP_EOL;
+                }
             
                 # vykresleni grafu:
                 echo "<script>". PHP_EOL;
@@ -52,7 +66,7 @@
                     else $first = False;
                     echo $data[$i][1];
                 }
-                echo "], type: 'scatter'};".PHP_EOL;
+                echo "], name: 'voda', type: 'scatter', mode: 'lines', fill: 'tozeroy'};".PHP_EOL;
                 echo "var t2 = {x: [";
                 $first = True;
                 for($i=1; $i<sizeof($data); $i++) {
@@ -67,9 +81,10 @@
                     else $first = False;
                     echo $data[$i][2];
                 }
-                echo "], type: 'scatter'};". PHP_EOL;
+                echo "], name: 'vzduch', type: 'scatter', mode: 'lines', fill: 'tozeroy'};". PHP_EOL;
                 echo "var data = [t1, t2];". PHP_EOL;
-                echo "Plotly.newPlot('chart', data); </script>". PHP_EOL;
+                echo "var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [°C]'}, margin: { t: 0}};". PHP_EOL;
+                echo "Plotly.newPlot('chart', data, layout); </script>". PHP_EOL;
             ?>
         </article>
     </section>
