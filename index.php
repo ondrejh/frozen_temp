@@ -43,45 +43,46 @@
                 for ($i=1; $i<sizeof($data); $i++)
                     echo "<tr><td>". $data[$i][0]. '</td><td>'. $data[$i][1]. '</td><td>'. $data[$i][2]. '</td></tr>'.PHP_EOL;
                 echo "</table>". PHP_EOL;
-            
-                # vykresleni grafu:
-                echo "<script>". PHP_EOL. "var voda_col = '#0033cc';". PHP_EOL. "var vzduch_col = '#3399ff';". PHP_EOL;
-                echo "var t1 = {x: [";
-                $first = True;
-                for($i=1; $i<sizeof($data); $i++) {
-                    if (! $first) echo ", ";
-                    else $first = False;
-                    echo "'". $data[$i][0]. "'";
-                }
-                echo "], y: [";
-                $first = True;
-                for($i=1; $i<sizeof($data); $i++) {
-                    if (! $first) echo ", ";
-                    else $first = False;
-                    echo $data[$i][1];
-                }
-                echo "], name: 'voda', type: 'scatter', mode: 'lines', fill: 'tozeroy', line: {color: voda_col}};".PHP_EOL;
-                echo "var t2 = {x: [";
-                $first = True;
-                for($i=1; $i<sizeof($data); $i++) {
-                    if (! $first) echo ", ";
-                    else $first = False;
-                    echo "'". $data[$i][0]. "'";
-                }
-                echo "], y: [";
-                $first = True;
-                for($i=1; $i<sizeof($data); $i++) {
-                    if (! $first) echo ", ";
-                    else $first = False;
-                    echo $data[$i][2];
-                }
-                echo "], name: 'vzduch', type: 'scatter', mode: 'lines', fill: 'tozeroy', line: {color: vzduch_col}};". PHP_EOL;
-                echo "var data = [t1, t2];". PHP_EOL;
-                echo "var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [°C]'}, margin: { t: 0}};". PHP_EOL;
-                echo "Plotly.newPlot('chart', data, layout); </script>". PHP_EOL;
             ?>
-            <script>document.getElementById("db_type").innerText = "<?php if ($mysql_version === true) {echo "MySQL";} else {echo "SqLite";}?>"</script>
         </article>
     </section>
+    <script> 
+        // graf
+        var voda_col = '#0033cc';
+        var vzduch_col = '#3399ff';
+        var t1 = {x: [ <?php
+            $first = True; for($i=1; $i<sizeof($data); $i++) {
+                if (! $first) echo ", ";
+                else $first = False;
+                echo "'". $data[$i][0]. "'";
+            }
+        ?> ], y: [ <?php
+            $first = True;
+            for($i=1; $i<sizeof($data); $i++) {
+                if (! $first) echo ", ";
+                else $first = False;
+                echo $data[$i][1];
+            }
+        ?> ], name: 'voda', type: 'scatter', mode: 'lines', fill: 'tozeroy', line: {color: voda_col}};
+        var t2 = {x: [ <?php
+            $first = True;
+            for($i=1; $i<sizeof($data); $i++) {
+                if (! $first) echo ", ";
+                else $first = False;
+                echo "'". $data[$i][0]. "'";
+            }
+        ?> ], y: [ <?php
+            $first = True;
+            for($i=1; $i<sizeof($data); $i++) {
+                if (! $first) echo ", ";
+                else $first = False;
+                echo $data[$i][2];
+            }
+        ?> ], name: 'vzduch', type: 'scatter', mode: 'lines', fill: 'tozeroy', line: {color: vzduch_col}};
+        var data = [t1, t2];
+        var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [C]'}, margin: { t: 0}};
+        Plotly.newPlot('chart', data, layout);
+    </script>
+    <script>document.getElementById("db_type").innerText = "<?php if ($mysql_version === true) {echo "MySQL";} else {echo "SqLite";}?>"</script>
 </body>
 </html>
