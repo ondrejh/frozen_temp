@@ -66,12 +66,29 @@ String find_in_string(String str, const String *sb, int nsb, const String sa) {
   return("");
 }
 
+void get_temp(String str, float *t, int *errs, bool *rdy) {
+  if (str == "") {
+    if (*rdy) {
+      if (*errs > MAX_ERRS)
+        *rdy = false;
+      else
+        *errs++;
+    }   
+  }
+  else {
+    *t = str.toFloat();
+    *rdy = true;
+    *errs = 0;
+  }
+}
+
 void loop() {
   static bool first = true;
 
   static bool ntp_synchronized = false;
   static bool t1_ready = false, t2_ready = false;
   static int t1_errs = 0, t2_errs = 0;
+  static float t1 = 0.0, t2 = 0.0;
 
   uint32_t now = millis();
   static uint32_t tick = now;
@@ -114,15 +131,15 @@ void loop() {
     else
       first = true;
 
-    if (i1 != "") {t1_errs = 0; t1_ready = true;} else {if (t1_errs >= MAX_ERRS) t1_ready = false; else t1_errs ++;}
-    if (i2 != "") {t2_errs = 0; t2_ready = true;} else {if (t2_errs >= MAX_ERRS) t2_ready = false; else t2_errs ++;}
+    get_temp(i1, &t1, &t1_errs, &t1_ready);
+    get_temp(i2, &t2, &t2_errs, &t2_ready);
 
-    if ((i1 != "") && (t1_ready) && (i2 != "") && (t2_ready)) {
+    if ((t1_ready) && (t2_ready)) {
       USE_SERIAL.print("T1: ");
-      USE_SERIAL.print(i1);
+      USE_SERIAL.print(t1);
       USE_SERIAL.print("°C"  );
       USE_SERIAL.print("  T2: ");
-      USE_SERIAL.print(i2);
+      USE_SERIAL.print(t2);
       USE_SERIAL.print("°C");
       USE_SERIAL.println();
     }
