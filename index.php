@@ -48,7 +48,7 @@
     </section>
     <script> 
         // graf
-        var voda_col = '#0033cc';
+        var voda_col = '#32CD32';
         var vzduch_col = '#3399ff';
         var t1 = {x: [ <?php
             $first = True; for($i=1; $i<sizeof($data); $i++) {
