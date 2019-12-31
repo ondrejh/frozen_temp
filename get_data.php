@@ -15,6 +15,11 @@ $db_t1 = 't1';
 $db_t2 = 't2';
 $db_stamp = 'stamp';
 
+$db_stat_name = 'statistics';
+$db_min = 'min';
+$db_avg = 'avg';
+$db_max = 'max';
+
 $sqlite_name = '/var/www/html/data.sql';
 $sqlite_table = 'readings';
 
@@ -70,6 +75,24 @@ function get_sql($limit = 'ALL') {
   $data = array(); 
   while($row = $db_data->fetch_array()) {
     $data[] = array(date("Y-m-d H:i", strtotime($row[$db_stamp])), $row[$db_t1], $row[$db_t2]);
+  }
+  $db_conn->close();
+  return $data;
+}
+
+
+// get statistics data from sql database
+function get_sql_statistics() {
+  global $db_host, $db_username, $db_password, $db_name, $db_stat_table, $db_t1, $db_t2, $db_min, $db_avg, $db_max, $db_stamp;
+
+  $db_conn = new mysqli($db_host, $db_username, $db_password, $db_name);
+  $query = "SELECT ". $db_stamp. ", ". $db_t1. $db_min. ", ". $db_t1. $db_avg. ", ". $db_t1. $db_max. ", ".
+      $db_t2. $db_min. ", ". $db_t2. $db_avg. ", ". $db_t2. $db_max. " FROM ". $db_stat_table;
+  //echo $query. PHP_EOL;
+  $db_data = $db_conn->query($query);
+  $data = array(); 
+  while($row = $db_data->fetch_array()) {
+    $data[] = array(date("Y-m-d H:i", strtotime($row[$db_stamp])), $row[$db_t1. $db_min], $row[$db_t1. $db_avg], $row[$db_t1. $db_max], $row[$db_t2. $db_min], $row[$db_t2. $db_avg], $row[$db_t2. $db_max]);
   }
   $db_conn->close();
   return $data;
