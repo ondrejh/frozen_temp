@@ -67,6 +67,7 @@ Start cron to get data every 15 minutes
   crontab -e
     .. navigate to the end of file and type
     */15 * * * * php /var/www/html/get_data.php
+    20 0 * * * php /var/www/html/statistics.php
     .. save
 ```
 Restart apache
