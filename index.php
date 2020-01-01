@@ -11,7 +11,9 @@
     <title>Brodak</title>
     <meta name="description" content="Vizualizace chladu." />
     <meta name="keywords" content="zima, kureuska" />
+    <link rel="shortcut icon" href="favicon.ico" />
     <link rel="stylesheet" type="text/css" href="style.css" media="screen, print" />
+    <link rel="stylesheet" type="text/css" href="local_style.css" media="screen, print" />
     <script src="plotly.min.js"></script>
 </head>
 
@@ -26,6 +28,7 @@
                 include "get_data.php";
             
                 $data = array();
+                $stat = array();
                 
                 $mysql_version = true;
                 if (isset($_GET["type"])) {
@@ -33,17 +36,55 @@
                     if ($_GET["type"] === 'sqlite') $mysql_version = false;
                 }
                 
-                if ($mysql_version === true)
+                if ($mysql_version === true) {
                     $data = get_sql('7 DAY');
+                    $stat = get_sql_statistics();
+                }
                 else
                     $data = get_sqlite('7 DAY');
 
-                # polozky z databaze
-                echo "<h2>Vypis</h2>". PHP_EOL. "<table>". PHP_EOL;
-                for ($i=1; $i<sizeof($data); $i++)
-                    echo "<tr><td>". $data[$i][0]. '</td><td>'. $data[$i][1]. '</td><td>'. $data[$i][2]. '</td></tr>'.PHP_EOL;
-                echo "</table>". PHP_EOL;
             ?>
+            <div class='left'>
+                <h2>Měření</h2>
+                <table>
+                    <tr>
+                        <th>Datum a čas</th>
+                        <th class="center green">Voda [°C]</th>
+                        <th class="center blue">Vzduch [°C]</th>
+                    </tr>
+                    <?php
+                        for ($i=(sizeof($data)-1); $i>0; $i--)
+                            echo "<tr><td>". $data[$i][0]. '</td><td>'. $data[$i][1]. '</td><td>'. $data[$i][2]. '</td></tr>'.PHP_EOL;
+                    ?>
+                </table>
+            </div>
+            <div class='right'>
+                <h2>Statistika</h2>
+                <table>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th colspan="3" class="center green">Voda [°C]</th>
+                        <th colspan="3" class="center blue">Vzduch [°C]</th>
+                    </tr>
+                    <tr>
+                        <th>Datum</th>
+                        <th>MIN</th>
+                        <th>AVG</th>
+                        <th>MAX</th>
+                        <th>MIN</th>
+                        <th>AVG</th>
+                        <th>MAX</th>
+                    </tr>
+                    <?php
+                        for ($i=(sizeof($stat)-1); $i>0; $i--) {
+                            echo "<tr><td>". explode(' ', $stat[$i][0])[0]. "</td>";
+                            for ($c=1; $c<7; $c++)
+                                echo "<td>". $stat[$i][$c]. "</td>";
+                            echo "</tr>". PHP_EOL;
+                        }
+                    ?>
+                </table>
+            </div>
         </article>
     </section>
     <script> 

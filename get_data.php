@@ -6,7 +6,7 @@ error_reporting(E_ALL);
     
 $db_host = 'localhost';
 $db_username = 'admin';
-$db_password = '1243';
+$db_password = '1234';
 
 $db_name = 'votuzilec';
 
@@ -15,7 +15,7 @@ $db_t1 = 't1';
 $db_t2 = 't2';
 $db_stamp = 'stamp';
 
-$db_stat_name = 'statistics';
+$db_stat_table = 'statistics';
 $db_min = 'min';
 $db_avg = 'avg';
 $db_max = 'max';

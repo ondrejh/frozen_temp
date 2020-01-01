@@ -1,0 +1,53 @@
+html, body {
+    padding: 0;
+    margin: 0;
+}
+.content {
+    max-width: 1360px;
+    padding: 0 15px 20px;
+    margin: 0 auto;
+}
+.content:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+.left {
+    float: left;
+    width: 26%;
+}
+.right {
+    float: right;
+    width: 72%;
+}
+table {
+    width: 100%;
+    border: 2px solid #ddd;
+    border-collapse: collapse;;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    text-align: left;
+}
+th + th,
+td + td {
+    text-align: right;
+}
+th {
+    font-weight: 700;
+    border-bottom: 2px solid #ddd;
+}
+tr:hover th,
+tr:hover td {
+    background-color: #ebebeb;
+}
+.center {
+    text-align: center;
+}
+.green {
+    background: #32CD32;
+}
+.blue {
+    background: #3399ff;
+}
