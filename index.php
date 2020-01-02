@@ -22,19 +22,23 @@
     <section class="content">
 
         <article class="main">
-            <h2>Graf (<span id='db_type'></span>)</h2>
+            <h2>Graf měření</h2>
             <div id='chart'></div>
+            
+            <h2>Graf statistiky</h2>
+            <div id='chart_stat'></div>
+            
             <?php
                 include "get_data.php";
             
-                $data = array();
-                $stat = array();
-                
                 $mysql_version = true;
                 if (isset($_GET["type"])) {
                     if ($_GET["type"] === 'mysql') $mysql_version = true;
                     if ($_GET["type"] === 'sqlite') $mysql_version = false;
                 }
+            
+                $data = array();
+                $stat = array();
                 
                 if ($mysql_version === true) {
                     $data = get_sql('7 DAY');
@@ -42,10 +46,10 @@
                 }
                 else
                     $data = get_sqlite('7 DAY');
-
             ?>
+            
             <div class='left'>
-                <h2>Měření</h2>
+                <h2>Hodnoty měření</h2>
                 <table>
                     <tr>
                         <th>Datum a čas</th>
@@ -59,7 +63,7 @@
                 </table>
             </div>
             <div class='right'>
-                <h2>Statistika</h2>
+                <h2>Denní statistika</h2>
                 <table>
                     <tr>
                         <th>&nbsp;</th>
@@ -87,8 +91,9 @@
             </div>
         </article>
     </section>
+    
     <script> 
-        // graf
+        // graf mereni
         var voda_col = '#32CD32';
         var vzduch_col = '#3399ff';
         var t1 = {x: [ <?php
@@ -121,9 +126,63 @@
             }
         ?> ], name: 'vzduch', type: 'scatter', mode: 'lines', fill: 'tozeroy', line: {color: vzduch_col}};
         var data = [t1, t2];
-        var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [C]'}, margin: { t: 0}};
+        var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [°C]'}, margin: { t: 0}};
         Plotly.newPlot('chart', data, layout);
     </script>
-    <script>document.getElementById("db_type").innerText = "<?php if ($mysql_version === true) {echo "MySQL";} else {echo "SqLite";}?>"</script>
+    
+    <script>
+        // graf statistiky
+        var voda_col = '#32CD32';
+        var vzduch_col = '#3399ff';
+        var line_width = 3;
+        <?php
+            $stat_x = ''; $first = True;
+            for($i=1; $i<sizeof($stat); $i++) {
+                if (! $first) $stat_x .= ", "; else $first = False;
+                $stat_x .= "'". explode(' ', $stat[$i][0])[0]. "'";
+            }
+        ?>
+        var t1min = {x: [ <?php echo $stat_x; ?> ], y: [ <?php
+            $first = True; for($i=1; $i<sizeof($stat); $i++) {
+                if (! $first) echo ", "; else $first = False;
+                echo $stat[$i][1];
+            }
+        ?> ], line: {width: 0}, marker: {color: voda_col}, mode: "lines", name: "min", type: "scatter", showlegend: false};
+        var t1max = {x: [ <?php echo $stat_x; ?> ], y: [ <?php
+            $first = True; for($i=1; $i<sizeof($stat); $i++) {
+                if (! $first) echo ", "; else $first = False;
+                echo $stat[$i][3];
+            }
+        ?> ], fill: "tonexty", line: {width: 0}, marker: {color: voda_col}, mode: "lines", name: "max", type: "scatter", showlegend: false};
+        var t1avg = {x: [ <?php echo $stat_x; ?> ], y: [ <?php
+            $first = True; for($i=1; $i<sizeof($stat); $i++) {
+                if (! $first) echo ", "; else $first = False;
+                echo $stat[$i][2];
+            }
+        ?> ], line: {width: line_width}, marker: {color: voda_col}, mode: "lines", name: "voda", type: "scatter", showlegend: true};
+        var t2min = {x: [ <?php echo $stat_x; ?> ], y: [ <?php
+            $first = True; for($i=1; $i<sizeof($stat); $i++) {
+                if (! $first) echo ", "; else $first = False;
+                echo $stat[$i][4];
+            }
+        ?> ], line: {width: 0}, marker: {color: vzduch_col}, mode: "lines", name: "min", type: "scatter", showlegend: false};
+        var t2max = {x: [ <?php echo $stat_x; ?> ], y: [ <?php
+            $first = True; for($i=1; $i<sizeof($stat); $i++) {
+                if (! $first) echo ", "; else $first = False;
+                echo $stat[$i][6];
+            }
+        ?> ], fill: "tonexty", line: {width: 0}, marker: {color: vzduch_col}, mode: "lines", name: "max", type: "scatter", showlegend: false};
+        var t2avg = {x: [ <?php echo $stat_x; ?> ], y: [ <?php
+            $first = True; for($i=1; $i<sizeof($stat); $i++) {
+                if (! $first) echo ", "; else $first = False;
+                echo $stat[$i][5];
+            }
+        ?> ], line: {width: line_width}, marker: {color: vzduch_col}, mode: "lines", name: "vzduch", type: "scatter", showlegend: true};
+        var data = [t2min, t2max, t1min, t1max, t2avg, t1avg];
+        var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [°C]'}, margin: { t: 0}};
+        Plotly.newPlot('chart_stat', data, layout);
+    </script>
+    
+    <script>document.title = "Brodak (<?php if ($mysql_version === true) {echo "MySQL";} else {echo "SqLite";}?>)"</script>
 </body>
 </html>
