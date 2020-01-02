@@ -24,22 +24,22 @@
         <article class="main">
             <h2>Graf měření</h2>
             <div id='chart'></div>
-            
+
             <h2>Graf statistiky</h2>
             <div id='chart_stat'></div>
-            
+
             <?php
                 include "get_data.php";
-            
+
                 $mysql_version = true;
                 if (isset($_GET["type"])) {
                     if ($_GET["type"] === 'mysql') $mysql_version = true;
                     if ($_GET["type"] === 'sqlite') $mysql_version = false;
                 }
-            
+
                 $data = array();
                 $stat = array();
-                
+
                 if ($mysql_version === true) {
                     $data = get_sql('7 DAY');
                     $stat = get_sql_statistics();
@@ -47,7 +47,7 @@
                 else
                     $data = get_sqlite('7 DAY');
             ?>
-            
+
             <div class='left'>
                 <h2>Hodnoty měření</h2>
                 <table>
@@ -91,8 +91,8 @@
             </div>
         </article>
     </section>
-    
-    <script> 
+
+    <script>
         // graf mereni
         var voda_col = '#32CD32';
         var vzduch_col = '#3399ff';
@@ -123,12 +123,11 @@
         var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [°C]'}, margin: { t: 0}};
         Plotly.newPlot('chart', data, layout);
     </script>
-    
+
     <script>
         // graf statistiky
         var voda_col = '#32CD32';
         var vzduch_col = '#3399ff';
-        var line_width = 3;
         <?php
             $stat_x = ''; $first = True;
             for($i=1; $i<sizeof($stat); $i++) {
@@ -153,7 +152,7 @@
                 if (! $first) echo ", "; else $first = False;
                 echo $stat[$i][2];
             }
-        ?> ], line: {width: line_width}, marker: {color: voda_col}, mode: "lines", name: "voda", type: "scatter", showlegend: true};
+        ?> ], marker: {color: voda_col}, mode: "lines", name: "voda", type: "scatter", showlegend: true};
         var t2min = {x: [ <?php echo $stat_x; ?> ], y: [ <?php
             $first = True; for($i=1; $i<sizeof($stat); $i++) {
                 if (! $first) echo ", "; else $first = False;
@@ -171,12 +170,12 @@
                 if (! $first) echo ", "; else $first = False;
                 echo $stat[$i][5];
             }
-        ?> ], line: {width: line_width}, marker: {color: vzduch_col}, mode: "lines", name: "vzduch", type: "scatter", showlegend: true};
+        ?> ], marker: {color: vzduch_col}, mode: "lines", name: "vzduch", type: "scatter", showlegend: true};
         var data = [t2min, t2max, t1min, t1max, t1avg, t2avg];
         var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [°C]'}, margin: { t: 0}};
         Plotly.newPlot('chart_stat', data, layout);
     </script>
-    
+
     <script>document.title = "Brodak (<?php if ($mysql_version === true) {echo "MySQL";} else {echo "SqLite";}?>)"</script>
 </body>
 </html>
