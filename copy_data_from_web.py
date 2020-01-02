@@ -13,6 +13,7 @@ db_t1 = "t1"
 db_t2 = "t2"
 db_stamp = "stamp"
 
+
 def get_data():
 
     fp = urllib.request.urlopen(url)
