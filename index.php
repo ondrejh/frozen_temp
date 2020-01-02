@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="rating" content="general">
-    <meta name="author" content="ondrejh">
+    <meta name="author" content="ondrejh, tomasb">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Brodak</title>
@@ -96,13 +96,14 @@
         // graf mereni
         var voda_col = '#32CD32';
         var vzduch_col = '#3399ff';
-        var t1 = {x: [ <?php
-            $first = True; for($i=1; $i<sizeof($data); $i++) {
-                if (! $first) echo ", ";
-                else $first = False;
-                echo "'". $data[$i][0]. "'";
+        <?php
+            $data_x = ''; $first = True;
+            for($i=1; $i<sizeof($data); $i++) {
+                if (! $first) $data_x .= ", "; else $first = False;
+                $data_x .= "'". $data[$i][0]. "'";
             }
-        ?> ], y: [ <?php
+        ?>
+        var t1 = {x: [ <?php echo $data_x; ?> ], y: [ <?php
             $first = True;
             for($i=1; $i<sizeof($data); $i++) {
                 if (! $first) echo ", ";
@@ -110,14 +111,7 @@
                 echo $data[$i][1];
             }
         ?> ], name: 'voda', type: 'scatter', mode: 'lines', fill: 'tozeroy', line: {color: voda_col}};
-        var t2 = {x: [ <?php
-            $first = True;
-            for($i=1; $i<sizeof($data); $i++) {
-                if (! $first) echo ", ";
-                else $first = False;
-                echo "'". $data[$i][0]. "'";
-            }
-        ?> ], y: [ <?php
+        var t2 = {x: [ <?php echo $data_x; ?> ], y: [ <?php
             $first = True;
             for($i=1; $i<sizeof($data); $i++) {
                 if (! $first) echo ", ";
@@ -125,7 +119,7 @@
                 echo $data[$i][2];
             }
         ?> ], name: 'vzduch', type: 'scatter', mode: 'lines', fill: 'tozeroy', line: {color: vzduch_col}};
-        var data = [t1, t2];
+        var data = [t2, t1];
         var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [°C]'}, margin: { t: 0}};
         Plotly.newPlot('chart', data, layout);
     </script>
@@ -178,7 +172,7 @@
                 echo $stat[$i][5];
             }
         ?> ], line: {width: line_width}, marker: {color: vzduch_col}, mode: "lines", name: "vzduch", type: "scatter", showlegend: true};
-        var data = [t2min, t2max, t1min, t1max, t2avg, t1avg];
+        var data = [t2min, t2max, t1min, t1max, t1avg, t2avg];
         var layout = {legend: {x: 0, y: 1}, yaxis: {title: 'teplota [°C]'}, margin: { t: 0}};
         Plotly.newPlot('chart_stat', data, layout);
     </script>

@@ -86,8 +86,8 @@ Restart apache
 ```
 
 ## ToDo:
-- vylepšit graf
-- screeshot by se hodil
+- sqlite version using php
+- hw display
 
 ## Sources:
 LAMP installation: https://randomnerdtutorials.com/raspberry-pi-apache-mysql-php-lamp-server/
