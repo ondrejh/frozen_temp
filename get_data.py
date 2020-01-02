@@ -1,7 +1,10 @@
+#!/usr/bin/env python3
+
 import urllib.request
 import sqlite3
 import os
 import sys
+import datetime
 
 
 DB = 'data.sql'
@@ -94,8 +97,94 @@ def data_dump(time_limit=None):
     return ret
 
 
+def statistics_dump():
+
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+
+    query = "SELECT {}, {}, {}, {}, {}, {}, {} FROM {}".format(NAME_STAMP,
+                                                               NAME_TEMP1 + NAME_MIN, NAME_TEMP1 + NAME_AVG,
+                                                               NAME_TEMP1 + NAME_MAX, NAME_TEMP2 + NAME_MIN,
+                                                               NAME_TEMP2 + NAME_AVG, NAME_TEMP2 + NAME_MAX,
+                                                               TAB_STATISTICS)
+
+    c.execute(query)
+    ret = c.fetchall()
+
+    conn.close()
+    return ret
+
+
 def create_statistics():
-    pass
+
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+
+    query = "CREATE TABLE IF NOT EXISTS {} (id INT AUTO_INCREMENT PRIMARY KEY, {} FLOAT, {} FLOAT, {} FLOAT, \
+{} FLOAT, {} FLOAT, {} FLOAT, {} DATETIME)".format(TAB_STATISTICS, NAME_TEMP1 + NAME_MIN, NAME_TEMP1 + NAME_AVG,
+                                                   NAME_TEMP1 + NAME_MAX, NAME_TEMP2 + NAME_MIN, NAME_TEMP2 + NAME_AVG,
+                                                   NAME_TEMP2 + NAME_MAX, NAME_STAMP)
+    c.execute(query)
+
+    query = "SELECT MAX({}) FROM {}".format(NAME_STAMP, TAB_STATISTICS)
+    c.execute(query)
+    dt_from = c.fetchone()[0]
+    if dt_from is None:
+        query = "SELECT MIN({}) FROM {}".format(NAME_STAMP, TAB_MEASUREMENT)
+        c.execute(query)
+        dt_from = c.fetchone()[0]
+        dt_from = dt_from.split()[0]
+    else:
+        dt_from = (datetime.datetime.strptime(dt_from, "%Y-%m-%d") + datetime.timedelta(1)).strftime("%Y-%m-%d")
+
+    query = "SELECT MAX({}) FROM {}".format(NAME_STAMP, TAB_MEASUREMENT)
+    c.execute(query)
+    dt_to = c.fetchone()[0].split()[0]
+
+    print('From {} to {}'.format(dt_from, dt_to))
+
+    dt_range = []
+    while dt_from != dt_to:
+        dt_range.append(dt_from)
+        dt_from = (datetime.datetime.strptime(dt_from, "%Y-%m-%d") + datetime.timedelta(1)).strftime("%Y-%m-%d")
+    #print(dt_range)
+
+    cnt = 0
+    for dt in dt_range:
+        query = "SELECT {}, {} FROM {} WHERE DATE({}) = '{}'".format(NAME_TEMP1, NAME_TEMP2, TAB_MEASUREMENT, NAME_STAMP,
+                                                                   dt)
+        c.execute(query)
+        res = c.fetchall()
+        if len(res) > 0:
+            t1min = t1max = t1avg = res[0][0]
+            t2min = t2max = t2avg = res[0][1]
+            if len(res) > 1:
+                for row in res[1:]:
+                    if t1min < row[0]:
+                        t1min = row[0]
+                    if t1max > row[0]:
+                        t2max = row[0]
+                    t1avg += row[0]
+                    if t2min < row[1]:
+                        t2min = row[1]
+                    if t2max > row[1]:
+                        t2max = row[1]
+                    t2avg += row[1]
+            t1avg /= len(res)
+            t2avg /= len(res)
+
+            query = "INSERT INTO {} ({}, {}, {}, {}, {}, {}, {}) VALUES ({}, {}, {}, {}, {}, {}, '{}')"
+            query = query.format(TAB_STATISTICS, NAME_TEMP1 + NAME_MIN, NAME_TEMP1 + NAME_AVG, NAME_TEMP1 + NAME_MAX,
+                                 NAME_TEMP2 + NAME_MIN, NAME_TEMP2 + NAME_AVG, NAME_TEMP2 + NAME_MAX, NAME_STAMP,
+                                 t1min, round(t1avg, 2), t1max, t2min, round(t2avg, 2), t2max, dt)
+            c.execute(query)
+            print("ADD {} {} {} {} {} {} {}".format(dt, t1min, round(t1avg, 2), t1max, t2min, round(t2avg, 2), t2max))
+            cnt += 1
+
+    conn.commit()
+    conn.close()
+
+    return cnt
 
 
 def copy_data_from_web():
@@ -123,12 +212,17 @@ if __name__ == '__main__':
                 data = data_dump(time_limit=t_lim)
             else:
                 data = data_dump()
-            for d in sorted(data, key=lambda x: x[1]):
+            for d in sorted(data, key=lambda x: x[0]):
                 print(d)
             print('{} rows.'.format(len(data)))
             exit(0)
+        if sys.argv[1] in ('-D', '--dump_statistics'):
+            data = statistics_dump()
+            for d in sorted(data, key=lambda x: x[0]):
+                print(d)
         if sys.argv[1] in ('-s', '--statistics'):
-            create_statistics()
+            cnt = create_statistics()
+            print('{} statistic rows added.'.format(cnt))
             exit(0)
         if sys.argv[1] in ('-c', '--copy'):
             copy_data_from_web()
