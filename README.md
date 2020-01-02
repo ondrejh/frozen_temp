@@ -1,6 +1,14 @@
 Votuzilec sensor chart
 ======================
 
+## Plot screenshots
+
+Measurement chart:
+![Measurement chart](/doc/measurement_plot.png)
+
+Statistics chart:
+![Statistics chart](/dec/statistics_plot.png)
+
 ## Raspberry Pi installation (python, sqlite - lite version)
 Install software (apache, php, git)
 ```
