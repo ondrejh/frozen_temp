@@ -160,14 +160,14 @@ def create_statistics():
             t2min = t2max = t2avg = res[0][1]
             if len(res) > 1:
                 for row in res[1:]:
-                    if t1min < row[0]:
+                    if t1min > row[0]:
                         t1min = row[0]
-                    if t1max > row[0]:
-                        t2max = row[0]
+                    if t1max < row[0]:
+                        t1max = row[0]
                     t1avg += row[0]
-                    if t2min < row[1]:
+                    if t2min > row[1]:
                         t2min = row[1]
-                    if t2max > row[1]:
+                    if t2max < row[1]:
                         t2max = row[1]
                     t2avg += row[1]
             t1avg /= len(res)

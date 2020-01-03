@@ -15,13 +15,12 @@ $db_t1 = 't1';
 $db_t2 = 't2';
 $db_stamp = 'stamp';
 
-$db_stat_table = 'statistics';
+$db_stat_table = 'statistika';
 $db_min = 'min';
 $db_avg = 'avg';
 $db_max = 'max';
 
 $sqlite_name = '/var/www/html/data.sql';
-$sqlite_table = 'readings';
 
 
 // return part of string between 'before' (array) and 'after' strings
@@ -88,11 +87,11 @@ function get_sql_statistics() {
   $db_conn = new mysqli($db_host, $db_username, $db_password, $db_name);
   $query = "SELECT ". $db_stamp. ", ". $db_t1. $db_min. ", ". $db_t1. $db_avg. ", ". $db_t1. $db_max. ", ".
       $db_t2. $db_min. ", ". $db_t2. $db_avg. ", ". $db_t2. $db_max. " FROM ". $db_stat_table;
-  //echo $query. PHP_EOL;
+  $query .= " ORDER BY ". $db_stamp;
   $db_data = $db_conn->query($query);
   $data = array(); 
   while($row = $db_data->fetch_array()) {
-    $data[] = array(date("Y-m-d H:i", strtotime($row[$db_stamp])), $row[$db_t1. $db_min], $row[$db_t1. $db_avg], $row[$db_t1. $db_max], $row[$db_t2. $db_min], $row[$db_t2. $db_avg], $row[$db_t2. $db_max]);
+    $data[] = array(date("Y-m-d", strtotime($row[$db_stamp])), $row[$db_t1. $db_min], $row[$db_t1. $db_avg], $row[$db_t1. $db_max], $row[$db_t2. $db_min], $row[$db_t2. $db_avg], $row[$db_t2. $db_max]);
   }
   $db_conn->close();
   return $data;
@@ -101,17 +100,35 @@ function get_sql_statistics() {
 
 // get data from sqlite database
 function get_sqlite($limit = 'ALL') {
-  global $sqlite_name, $sqlite_table, $db_stamp, $db_t1, $db_t2;
+  global $sqlite_name, $db_table, $db_stamp, $db_t1, $db_t2;
 
   $db = new SQLite3($sqlite_name);
-  $query = "SELECT ". $db_stamp. ", ". $db_t1. ", ". $db_t2. " FROM '". $sqlite_table. "'";
+  $query = "SELECT ". $db_stamp. ", ". $db_t1. ", ". $db_t2. " FROM '". $db_table. "'";
   if ($limit != 'ALL')
     $query = $query. " WHERE '". $db_stamp. "' > datetime('now', '". $limit. "')";
+  $query .= " ORDER BY ". $db_stamp;
   $db_data = $db->query($query);
   $data = array();
   
   while($row = $db_data->fetchArray()) {
     $data[] = array(date("Y-m-d H:i", strtotime($row[$db_stamp])), $row[$db_t1], $row[$db_t2]);
+  }
+  return $data;
+}
+
+
+// get statistics data from sqlite database
+function get_sqlite_statistics() {
+  global $sqlite_name, $db_stat_table, $db_t1, $db_t2, $db_min, $db_avg, $db_max, $db_stamp;
+    
+  $db = new SQLite3($sqlite_name);
+  $query = "SELECT ". $db_stamp. ", ". $db_t1. $db_min. ", ". $db_t1. $db_avg. ", ". $db_t1. $db_max. ", ".
+      $db_t2. $db_min. ", ". $db_t2. $db_avg. ", ". $db_t2. $db_max. " FROM ". $db_stat_table;
+  $query .= " ORDER BY ". $db_stamp;
+  $db_data = $db->query($query);
+  $data = array(); 
+  while($row = $db_data->fetchArray()) {
+    $data[] = array(date("Y-m-d", strtotime($row[$db_stamp])), $row[$db_t1. $db_min], $row[$db_t1. $db_avg], $row[$db_t1. $db_max], $row[$db_t2. $db_min], $row[$db_t2. $db_avg], $row[$db_t2. $db_max]);
   }
   return $data;
 }

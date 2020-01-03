@@ -44,8 +44,10 @@
                     $data = get_sql('7 DAY');
                     $stat = get_sql_statistics();
                 }
-                else
+                else {
                     $data = get_sqlite('7 DAY');
+                    $stat = get_sqlite_statistics();
+                }
             ?>
 
             <div class='left'>
@@ -81,8 +83,8 @@
                     </tr>
                     <?php
                         for ($i=(sizeof($stat)-1); $i>0; $i--) {
-                            echo "<tr><td>". explode(' ', $stat[$i][0])[0]. "</td>";
-                            for ($c=1; $c<7; $c++)
+                            echo "<tr>";
+                            for ($c=0; $c<7; $c++)
                                 echo "<td>". $stat[$i][$c]. "</td>";
                             echo "</tr>". PHP_EOL;
                         }
@@ -132,7 +134,7 @@
             $stat_x = ''; $first = True;
             for($i=1; $i<sizeof($stat); $i++) {
                 if (! $first) $stat_x .= ", "; else $first = False;
-                $stat_x .= "'". explode(' ', $stat[$i][0])[0]. "'";
+                $stat_x .= "'". $stat[$i][0]. "'";
             }
         ?>
         var t1min = {x: [ <?php echo $stat_x; ?> ], y: [ <?php

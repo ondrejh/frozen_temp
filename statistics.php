@@ -13,7 +13,7 @@ $db_table = 'teplomer';
 
 $db_stamp = 'stamp';
 
-$db_stat = 'statistics';
+$db_stat = 'statistika';
 $db_t1 = 't1';
 $db_t2 = 't2';
 $db_avg = 'avg';
