@@ -35,11 +35,12 @@ Copy page files
   cp ploly.min.js /var/www/html/
   cp index.php /var/www/html/
 ```
-Start cron to get data every 15 minutes
+Start cron to get data every 15 minutes and last day statistics every day at 00:20
 ```
   crontab -e
     .. navigate to the end of file and type
-    */15 * * * * python3 /home/pi/
+    */15 * * * * python3 /home/pi/get_data.py
+    20 0 * * * python3 /home/pi/get_data.py -s
     .. save
 ```
 Restart apache
