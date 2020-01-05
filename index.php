@@ -45,7 +45,7 @@
                     $stat = get_sql_statistics();
                 }
                 else {
-                    $data = get_sqlite('7 DAY');
+                    $data = get_sqlite('7 days');
                     $stat = get_sqlite_statistics();
                 }
             ?>

@@ -103,10 +103,11 @@ function get_sqlite($limit = 'ALL') {
   global $sqlite_name, $db_table, $db_stamp, $db_t1, $db_t2;
 
   $db = new SQLite3($sqlite_name);
-  $query = "SELECT ". $db_stamp. ", ". $db_t1. ", ". $db_t2. " FROM '". $db_table. "'";
+  $query = "SELECT ". $db_stamp. ", ". $db_t1. ", ". $db_t2. " FROM ". $db_table. "";
   if ($limit != 'ALL')
-    $query = $query. " WHERE '". $db_stamp. "' > datetime('now', '". $limit. "')";
-  $query .= " ORDER BY ". $db_stamp;
+    $query = $query. " WHERE ". $db_stamp. " BETWEEN datetime('now', '-". $limit. "') AND datetime('now', 'localtime')";
+  $query .= " ORDER BY ". $db_stamp. ";";
+  #echo $query. PHP_EOL;
   $db_data = $db->query($query);
   $data = array();
   
